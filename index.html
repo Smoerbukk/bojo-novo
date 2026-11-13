@@ -138,6 +138,16 @@
     border-bottom: 1px solid var(--line);
   }
 
+  /* Podkast-embeds */
+  .podcast { margin: 0 0 1rem; }
+  .podcast iframe, .podcast .embed-placeholder {
+    display: block;
+    width: 100%;
+    height: 352px;
+    border: 0;
+    border-radius: 12px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .page-dark { transition: none; }
   }
@@ -186,6 +196,16 @@
     </ul>
   </section>
 
+  <section aria-labelledby="laer-mer">
+    <h2 id="laer-mer">Lær om Beaujolais Nouveau</h2>
+    <div class="podcast">
+      <iframe title="Spotify-episode 1" src="https://open.spotify.com/embed/episode/7IYgigjhsNvLuHoFzC0Jsi?utm_source=generator&amp;si=88be265e69a24101" width="100%" height="352" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+    <div class="podcast">
+      <iframe title="Spotify-episode 2" src="https://open.spotify.com/embed/episode/4Fxwi9av3WG0D0aIGzEJ8o?utm_source=generator&amp;si=46b2a8ada3954b3e" width="100%" height="352" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+  </section>
+
   <section aria-labelledby="vinliste">
     <h2 id="vinliste">Vinlisten</h2>
     <ul class="wines" id="wine-list"></ul>
@@ -230,6 +250,12 @@
   var clone = page.querySelector("main").cloneNode(true);
   Array.prototype.forEach.call(clone.querySelectorAll("[id]"), function (e) {
     e.removeAttribute("id");
+  });
+  // Ikke last Spotify-embedsene to ganger: bytt dem ut med tomme felt i samme høyde.
+  Array.prototype.forEach.call(clone.querySelectorAll("iframe"), function (f) {
+    var ph = document.createElement("div");
+    ph.className = "embed-placeholder";
+    f.parentNode.replaceChild(ph, f);
   });
   dark.appendChild(clone);
   page.appendChild(dark);
