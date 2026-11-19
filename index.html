@@ -130,6 +130,43 @@
   .wines td:nth-child(4) { min-width: 12rem; }
   .wines .price { white-space: nowrap; font-variant-numeric: tabular-nums; }
 
+  /* Faner under Vinlisten */
+  .tabs { display: flex; gap: 1.5rem; border-bottom: 1px solid var(--line); margin: 0 0 1.25rem; }
+  .tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin: 0 0 -1px;
+    padding: .5rem 0;
+    font: inherit;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tab:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+  .page[data-tab="prio"] [data-tab-btn="prio"],
+  .page[data-tab="smak"] [data-tab-btn="smak"] { color: var(--text); border-bottom-color: currentColor; }
+  [data-panel="smak"] { display: none; }
+  .page[data-tab="smak"] [data-panel="smak"] { display: block; }
+  .page[data-tab="smak"] [data-panel="prio"] { display: none; }
+
+  /* Smakingsliste */
+  .bn-liste { list-style: none; margin: 0; padding: 0; }
+  .bn-prod { padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+  .bn-prod:first-child { padding-top: 0; }
+  .bn-prod h3 { font-family: var(--serif); font-weight: 600; font-size: 1.4rem; line-height: 1.2; margin: 0; }
+  .bn-sted { margin: .15rem 0 0; font-size: .9rem; color: var(--muted); }
+  .bn-om { margin: .75rem 0 1rem; }
+  .bn-viner { display: grid; gap: .75rem; }
+  .bn-vin { padding: .85rem 1rem; border-radius: 6px; background: color-mix(in srgb, var(--text) 8%, transparent); }
+  .bn-vin.vanlig { background: none; border: 1px solid var(--line); }
+  .bn-vin.alkoholfri { background: none; border: 1px dashed var(--muted); }
+  .bn-vin.alkoholfri .bn-type { color: var(--text); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; }
+  .bn-type { display: block; font-size: .8rem; color: var(--muted); margin-bottom: .15rem; }
+  .bn-navn { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.05rem; }
+  .bn-vin p { margin: .4rem 0 0; font-size: .92rem; color: var(--muted); }
+
   /* Gjesteliste */
   .guests {
     list-style: none;
@@ -162,7 +199,7 @@
 </style>
 </head>
 <body>
-<div class="page" id="page">
+<div class="page" id="page" data-tab="prio">
 <main>
   <header class="hero">
     <h1>Bojo Novo-aften</h1>
@@ -216,26 +253,99 @@
 
   <section aria-labelledby="vinliste">
     <h2 id="vinliste">Vinlisten</h2>
-    <p class="list-intro">Dette er den prioriterte listen for vinkvelden.</p>
-    <div class="table-wrap">
-      <table class="wines">
-        <thead>
-          <tr><th>#</th><th>Vin</th><th>Pris</th><th>Hvorfor</th></tr>
-        </thead>
-        <tbody>
-        <tr><td>1</td><td>Foillard Beaujolais Nouveau</td><td class="price">274,90</td><td>Jean Foillard er en av «Gang of Four», de mest ettertraktede produsentene i Beaujolais</td></tr>
-        <tr><td>2</td><td>Guy Breton Fanchon Beaujolais-Villages Nouveau</td><td class="price">289,90</td><td>Også «Gang of Four». Lista oppgir 14,7 % alkohol, som er høyt for Breton. Det kan være en tastefeil</td></tr>
-        <tr><td>3</td><td>Dom. Jean-Claude Lapalu Beaujolais-Villages Nouveau</td><td class="price">275,00</td><td>Toppnavn innen naturvin, gamle stokker</td></tr>
-        <tr><td>4</td><td>Ch. Cambon Beaujolais Nouveau</td><td class="price">234,90</td><td>Drives av Lapierre-familien. Mye kvalitet for prisen</td></tr>
-        <tr><td>5</td><td>Jean-Paul Brun L’Ancien Beaujolais Nouveau</td><td class="price">239,90</td><td>Klassiker med tradisjonell vinifikasjon, svært god verdi</td></tr>
-        <tr><td>6</td><td>Philippe Viet Bojo Le Clown Beaujolais Nouveau</td><td class="price">299,00</td><td>Ny stjerne i Morgon, men dyrest på lista</td></tr>
-        <tr><td>7</td><td>Ch. Thivin Gamay Noir Beaujolais Nouveau</td><td class="price">222,90</td><td>Referanseprodusent i Côte de Brouilly, god pris</td></tr>
-        <tr><td>8</td><td>Dom. Saint-Cyr French Kiss Kanon Bojo Nouveau</td><td class="price">249,90</td><td>Økologisk naturvin, 14,5 % alkohol</td></tr>
-        <tr><td>9</td><td>Bulliat Bouquet Final Beaujolais Nouveau</td><td class="price">205,90</td><td>Billigste vin fra en håndverksprodusent på lista</td></tr>
-        <tr><td>10</td><td>Laurent Perrachon Beaujolais Villages Nouveau</td><td class="price">259,90</td><td>Solid cru-produsent fra Juliénas. Alternativt hans Sans Soufre til 270,40</td></tr>
-        </tbody>
-      </table>
+    <div class="tabs" role="tablist" aria-label="Vinlister">
+      <button type="button" role="tab" id="tab-prio" class="tab" data-tab-btn="prio" aria-selected="true" aria-controls="panel-prio">Shortlist</button>
+      <button type="button" role="tab" id="tab-smak" class="tab" data-tab-btn="smak" aria-selected="false" aria-controls="panel-smak" tabindex="-1">Hva vi skal smake</button>
     </div>
+
+    <div class="tabpanel" id="panel-prio" role="tabpanel" aria-labelledby="tab-prio" data-panel="prio">
+      <p class="list-intro">Dette er den prioriterte listen for vinkvelden.</p>
+      <div class="table-wrap">
+        <table class="wines">
+          <thead>
+            <tr><th>#</th><th>Vin</th><th>Pris</th><th>Hvorfor</th></tr>
+          </thead>
+          <tbody>
+          <tr><td>1</td><td>Foillard Beaujolais Nouveau</td><td class="price">274,90</td><td>Jean Foillard er en av «Gang of Four», de mest ettertraktede produsentene i Beaujolais</td></tr>
+          <tr><td>2</td><td>Guy Breton Fanchon Beaujolais-Villages Nouveau</td><td class="price">289,90</td><td>Også «Gang of Four». Lista oppgir 14,7 % alkohol, som er høyt for Breton. Det kan være en tastefeil</td></tr>
+          <tr><td>3</td><td>Dom. Jean-Claude Lapalu Beaujolais-Villages Nouveau</td><td class="price">275,00</td><td>Toppnavn innen naturvin, gamle stokker</td></tr>
+          <tr><td>4</td><td>Ch. Cambon Beaujolais Nouveau</td><td class="price">234,90</td><td>Drives av Lapierre-familien. Mye kvalitet for prisen</td></tr>
+          <tr><td>5</td><td>Jean-Paul Brun L’Ancien Beaujolais Nouveau</td><td class="price">239,90</td><td>Klassiker med tradisjonell vinifikasjon, svært god verdi</td></tr>
+          <tr><td>6</td><td>Philippe Viet Bojo Le Clown Beaujolais Nouveau</td><td class="price">299,00</td><td>Ny stjerne i Morgon, men dyrest på lista</td></tr>
+          <tr><td>7</td><td>Ch. Thivin Gamay Noir Beaujolais Nouveau</td><td class="price">222,90</td><td>Referanseprodusent i Côte de Brouilly, god pris</td></tr>
+          <tr><td>8</td><td>Dom. Saint-Cyr French Kiss Kanon Bojo Nouveau</td><td class="price">249,90</td><td>Økologisk naturvin, 14,5 % alkohol</td></tr>
+          <tr><td>9</td><td>Bulliat Bouquet Final Beaujolais Nouveau</td><td class="price">205,90</td><td>Billigste vin fra en håndverksprodusent på lista</td></tr>
+          <tr><td>10</td><td>Laurent Perrachon Beaujolais Villages Nouveau</td><td class="price">259,90</td><td>Solid cru-produsent fra Juliénas. Alternativt hans Sans Soufre til 270,40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tabpanel" id="panel-smak" role="tabpanel" aria-labelledby="tab-smak" data-panel="smak">
+      <ol class="bn-liste">
+        <li class="bn-prod">
+          <h3>Jean Foillard</h3>
+          <p class="bn-sted">Villié-Morgon</p>
+          <p class="bn-om">En av «Gang of Four». Foillard er mest kjent for Morgon fra åsen Côte du Py, og vinene hans er blant de mest ettertraktede i distriktet.</p>
+          <div class="bn-viner">
+          <div class="bn-vin"><span class="bn-type">Nouveau</span><span class="bn-navn">Foillard Beaujolais Nouveau 2026</span><p>Saftig og fruktig, med kirsebær, krydder og urt.</p></div>
+          <div class="bn-vin vanlig"><span class="bn-type">Vanlig variant (cru)</span><span class="bn-navn">Foillard Morgon 2023</span><p>Foillards klassiker. Frisk og saftig, med god balanse, konsentrasjon og lengde. Strammere og mer strukturert enn nouveauen.</p></div>
+          </div>
+        </li>
+        <li class="bn-prod">
+          <h3>Jean-Claude Lapalu</h3>
+          <p class="bn-sted">Saint-Étienne-la-Varenne, ved Brouilly</p>
+          <p class="bn-om">Lapalu er et av de store navnene innen naturvin i Beaujolais. Han jobber med gamle stokker og lar vinene gjære spontant med minimal inngripen.</p>
+          <div class="bn-viner">
+          <div class="bn-vin"><span class="bn-type">Nouveau</span><span class="bn-navn">Dom. Jean-Claude Lapalu Beaujolais-Villages Nouveau 2026</span><p>Saftig og fruktig, med kirsebær, krydder og urt.</p></div>
+          <div class="bn-vin vanlig"><span class="bn-type">Vanlig variant</span><span class="bn-navn">Lapalu Beaujolais-Villages Vieilles Vignes 2024</span><p>Fra gamle stokker. Ung og frisk duft av røde bær og et hint av blomst, med god konsentrasjon og lengde.</p></div>
+          </div>
+        </li>
+        <li class="bn-prod">
+          <h3>Château Cambon</h3>
+          <p class="bn-sted">Beaujolais</p>
+          <p class="bn-om">Drives av Lapierre-familien, kjent fra Marcel Lapierre i Morgon, som også var en av «Gang of Four». Samme naturlige filosofi, men med lettere og mer umiddelbare viner til en vennlig pris.</p>
+          <div class="bn-viner">
+          <div class="bn-vin"><span class="bn-type">Nouveau</span><span class="bn-navn">Ch. Cambon Beaujolais Nouveau 2026</span><p>Saftig rød frukt, ung og bærpreget, med ripsfrukt og god syre.</p></div>
+          <div class="bn-vin vanlig"><span class="bn-type">Vanlig variant</span><span class="bn-navn">Ch. Cambon Beaujolais 2024</span><p>Lavt svovlet og spontangjæret på ståltank, deretter lagret på bunnfall på gamle store fat. Frisk, saftig og bæraktig med god mineralitet.</p></div>
+          </div>
+        </li>
+        <li class="bn-prod">
+          <h3>Jean-Paul Brun</h3>
+          <p class="bn-sted">Domaine des Terres Dorées, Charnay</p>
+          <p class="bn-om">Brun lager vin på burgundisk vis i stedet for karbonisk gjæring, som vanlig i Beaujolais. L’Ancien kommer fra de eldste stokkene, og den første høstingen går til nouveauen.</p>
+          <div class="bn-viner">
+          <div class="bn-vin"><span class="bn-type">Nouveau</span><span class="bn-navn">Jean-Paul Brun L’Ancien Beaujolais Nouveau 2026</span><p>Frisk rødbærpreget duft med fiol og kalkmineraler. Saftig frukt og god konsentrasjon.</p></div>
+          <div class="bn-vin vanlig"><span class="bn-type">Vanlig variant</span><span class="bn-navn">Jean-Paul Brun L’Ancien Beaujolais 2024</span><p>Samme stokker, men modnet på bunnfall i betongtanker i åtte måneder. Myk og saftig, med moden jordbær, bringebær, te og blomst.</p></div>
+          </div>
+        </li>
+        <li class="bn-prod">
+          <h3>Domaine Saint-Cyr</h3>
+          <p class="bn-sted">Sørlige Beaujolais</p>
+          <p class="bn-om">Raphaël Saint-Cyr driver økologisk og lager naturvin med personlig stil og leken innpakning.</p>
+          <div class="bn-viner">
+          <div class="bn-vin"><span class="bn-type">Nouveau</span><span class="bn-navn">Dom. Saint-Cyr French Kiss Kanon Bojo Nouveau 2026</span><p>Fruktig, saftig og frisk, med god syre og overraskende god tanninstruktur. Uvanlig kraftig for en nouveau, med 14,5 % alkohol.</p></div>
+          </div>
+        </li>
+        <li class="bn-prod">
+          <h3>Bulliat</h3>
+          <p class="bn-sted">Morgon</p>
+          <p class="bn-om">Familiedomene som driver økologisk og lager rene, fruktdrevne viner.</p>
+          <div class="bn-viner">
+          <div class="bn-vin"><span class="bn-type">Nouveau</span><span class="bn-navn">Bulliat Bouquet Final Beaujolais Nouveau 2026</span><p>Økologisk. Saftig rød frukt, ung og bærpreget, med ripsfrukt og god syre.</p></div>
+          </div>
+        </li>
+        <li class="bn-prod">
+          <h3>Muri</h3>
+          <p class="bn-sted">Danmark</p>
+          <p class="bn-om">Til de som ikke drikker alkohol: en fermentert drikk med kirsebærvin som utgangspunkt.</p>
+          <div class="bn-viner">
+            <div class="bn-vin alkoholfri"><span class="bn-type">Alkoholfritt</span><span class="bn-navn">Muri the Four Horsemen</span><p>Laget med blant annet kefir, rødbete, tomat, grønn pepper og laurbær. Smaker syrlig og moden kirsebær med et urtepreg. Passer til mat på samme måte som en rødvin.</p></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+
     <p class="more"><a href="https://www.vinmonopolet.no/lanseringer/beaujolais-nouveau-2026" target="_blank" rel="noopener">Les mer om slippet og se komplett liste her</a></p>
   </section>
 </main>
@@ -305,6 +415,30 @@
   }
   requestAnimationFrame(frame);
   window.addEventListener("resize", function () { draw(performance.now()); });
+
+  // Faner under Vinlisten. Valget settes på .page, så begge lagene (lyst og mørkt) følger med.
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".tabs [data-tab-btn]"));
+    function select(name, focus) {
+      page.setAttribute("data-tab", name);
+      tabs.forEach(function (t) {
+        var on = t.getAttribute("data-tab-btn") === name;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+      });
+      draw(performance.now());
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { select(t.getAttribute("data-tab-btn")); });
+      t.addEventListener("keydown", function (e) {
+        var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        select(tabs[(i + d + tabs.length) % tabs.length].getAttribute("data-tab-btn"), true);
+      });
+    });
+  })();
 </script>
 </body>
 </html>
